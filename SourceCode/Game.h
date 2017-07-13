@@ -1,9 +1,8 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H 
 
 #include<SFML/Graphics.hpp>
 #include "window.h" 
-//#include"Board.h"
-#include "EventManager.h"
 #include "SharedContext.h"
 #include "StateManager.h"
 
@@ -28,3 +27,4 @@ private:
  
 };
 
+#endif

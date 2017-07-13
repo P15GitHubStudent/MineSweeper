@@ -4,6 +4,7 @@ StateManager::StateManager(SharedContext* l_shared)
 	: m_shared(l_shared)
 {
 	RegisterState<Play_State>(StateType::Game);
+	RegisterState<GameOver_State>(StateType::GameOver);
 	//RegisterState<GameOver_State>(StateType::GameOver); states pou thelo na balo 
 	//RegisterState<MainMenu_State>(StateType::MainMenu);
 }

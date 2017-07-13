@@ -1,5 +1,9 @@
-#pragma once
+
+#ifndef BASE_STATE_H
+#define BASE_STATE_H
+
 #include <SFML/Graphics.hpp>
+
 class StateManager;
 
 class BaseState {
@@ -28,3 +32,6 @@ protected:
 	bool m_transparent;
 	bool m_transcendent;
 };
+
+
+#endif

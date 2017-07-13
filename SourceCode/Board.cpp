@@ -1,13 +1,14 @@
-#include"StateManager.h"
+
 #include "Board.h"
-#include<iostream>
+#include"StateManager.h"
+#include"EventManager.h"
 
 
 
 
 sf::Vector2i Board::getTile2dCoords() {
 
-	sf::Vector2i mPos = m_sharedContextPtr->evMgr->GetMousePos(m_sharedContextPtr->win->getWindow());
+	sf::Vector2i mPos = m_stateMgrPtr->GetContext()->evMgr->GetMousePos(m_stateMgrPtr->GetContext()->win->getWindow());
 
 	sf::Vector2i TileIds;
 
@@ -19,10 +20,11 @@ sf::Vector2i Board::getTile2dCoords() {
 
 }
 
-
 void Board::rClick(EventDetails * evDetails) {
 	
 	sf::Vector2i tileCoords =getTile2dCoords();
+
+	if (tileCoords.x >= m_width / Tile::SIZE || tileCoords.x < 0 || tileCoords.y >= m_height / Tile::SIZE || tileCoords.y < 0)return;
 
 	if (m_tile[tileCoords.y][tileCoords.x].m_visited)return;
 
@@ -86,11 +88,12 @@ void Board::lClick(EventDetails * evDetails) {
 
 	sf::Vector2i tileCoords = getTile2dCoords();
 
-	sf::Vector2i Mpos = m_sharedContextPtr->evMgr->GetMousePos();
+	sf::Vector2i Mpos = m_stateMgrPtr->GetContext()->evMgr->GetMousePos();
 
-	if (m_tile[tileCoords.y][tileCoords.x].isBomb()) {
-		std::cout << "You Lost!" << std::endl;
-		m_sharedContextPtr->evMgr->SetCurrentState(StateType::GameOver);
+	if (tileCoords.x >= m_width / Tile::SIZE || tileCoords.x < 0 || tileCoords.y >= m_height / Tile::SIZE || tileCoords.y < 0)return;
+
+	if (m_tile[tileCoords.y][tileCoords.x].m_Bomb) {
+		m_stateMgrPtr->SwitchTo(StateType::GameOver);
 		return;
 	}
 
@@ -129,13 +132,14 @@ void Board::reveal(int x,int y) {
 
 }
 
-void Board::Create(const sf::Vector2u & dimensionBoard, unsigned int numOfBombs,SharedContext * shptr){
+
+void Board::Create(const sf::Vector2u & dimensionBoard, unsigned int numOfBombs,StateManager * stmgrptr){
 
 	m_width = dimensionBoard.x;
 	m_height = dimensionBoard.y;
 	m_numOfBombs = numOfBombs;
 	m_victoryCounter = 0;
-	m_sharedContextPtr = shptr;
+	m_stateMgrPtr = stmgrptr;
 	m_rClickCounter = 0;
 	//////////////////////////////////////////////////////////////
 
@@ -170,14 +174,11 @@ void Board::Create(const sf::Vector2u & dimensionBoard, unsigned int numOfBombs,
 
 		int randY = rand() % yRangle;
 
-		m_tile[randY][randx].m_tileRect.setFillColor(sf::Color(255, 0, 255));
-
 		m_tile[randY][randx].m_Bomb = true;
 
 	}
 
 	initCallBacksBindings();
-
 }
 
 
@@ -185,20 +186,16 @@ void Board::initCallBacksBindings() {
 
 	Binding * rClickBind=new Binding("rClick");
 	rClickBind->BindEvent(EventType::MButtonUp, sf::Mouse::Right);
-	m_sharedContextPtr->evMgr->AddBinding(std::move(rClickBind));
-	m_sharedContextPtr->evMgr->AddCallback(StateType::Game, "rClick", &Board::rClick,this);
+	m_stateMgrPtr->GetContext()->evMgr->AddBinding(std::move(rClickBind));
+	m_stateMgrPtr->GetContext()->evMgr->AddCallback(StateType::Game, "rClick", &Board::rClick,this);
 	Binding * lClickBind=new Binding("lClick");
 	lClickBind->BindEvent(EventType::MButtonUp, sf::Mouse::Left);
-	m_sharedContextPtr->evMgr->AddBinding(std::move(lClickBind));
-	m_sharedContextPtr->evMgr->AddCallback(StateType::Game, "lClick", &Board::lClick, this);
+	m_stateMgrPtr->GetContext()->evMgr->AddBinding(std::move(lClickBind));
+	m_stateMgrPtr->GetContext()->evMgr->AddCallback(StateType::Game, "lClick", &Board::lClick, this);
 }
 
 void Board::deleteCallBacksBindings() {
-
-
 }
-
-
 
 void Board::setDimensions(unsigned int width, unsigned int height) {
 	m_width = width;
@@ -210,19 +207,12 @@ void Board::setNumOfBombs(unsigned int numOfBombs) {
 }
 
 
-
-
-void Board::setSharedContext(SharedContext * sharedContextptr) {
-	m_sharedContextPtr = sharedContextptr;
-}
-
-
 void Board::Update(const float & dt) {
 }
 
 void Board::Draw() {
 
-	sf::RenderWindow * win = m_sharedContextPtr->win->getWindow();
+	sf::RenderWindow * win = m_stateMgrPtr->GetContext()->win->getWindow();
 
 	sf::RectangleShape rect;
 	rect.setFillColor(sf::Color::Red);
@@ -235,9 +225,21 @@ void Board::Draw() {
 
 		for (int y = 0; y < m_height / Tile::SIZE; ++y) {
 
+			if (m_stateMgrPtr->HasState(StateType::GameOver) && m_tile[y][x].m_Bomb) {
+
+				m_tile[y][x].m_tileRect.setFillColor(sf::Color(232, 23, 54));
+
+			}
+
+		
 			m_tile[y][x].Draw(win);
+		
 		}
 	}
+
+
+
+
 
 }
 

@@ -1,29 +1,30 @@
 #pragma once
 
-#include<SFML\Graphics.hpp>
-#include"StateManager.h"
 #include"BaseState.h"
+#include<SFML\Graphics.hpp>
+#include"EventManager.h"
+#include"StateManager.h"
 #include"Board.h"
 
 
+class Play_State:public BaseState{
 
-
-class Play_State : public BaseState
-{
 public:
-	Play_State(StateManager * l_stateMgr);
-	~Play_State();
+	Play_State(StateManager * mStateMgr);
+	~Play_State() = default;
 
-	void OnCreate();
-	void OnDestroy();
-	void Activate();
-	void Deactivate();
+	 void OnCreate();
+	 void OnDestroy();
 
-	virtual void Update(const sf::Time& l_time);
-	virtual void Draw();
+	 void Activate();
+	 void Deactivate();
+
+	 void Update(const sf::Time& l_time);
+	 void Draw();
 
 private:
-	Board m_board;
+	Board *  m_board;
+	
+
 
 };
-

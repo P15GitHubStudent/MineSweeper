@@ -1,4 +1,8 @@
-#pragma once
+#pragma once 
+
+/*
+ithelan na to kano sigleton alla telos panton ! 
+*/
 
 #include"window.h"
 #include"EventManager.h"

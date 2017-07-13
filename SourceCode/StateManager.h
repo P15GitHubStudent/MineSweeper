@@ -1,13 +1,17 @@
 #pragma once 
 
-#pragma once
+#ifndef STATEMANAGER_H
+#define STATEMANAGER_H
+
+
 #include <vector>
 #include <unordered_map>
 #include"BaseState.h"
 #include"SharedContext.h"
 #include<functional>
-#include"Board.h"
 #include"Play_State.h"
+#include"Board.h"
+#include"GameOverState.h"
 
 enum class StateType { Intro = 1, MainMenu, Game, Paused, GameOver, Credits };
 
@@ -57,3 +61,5 @@ private:
 	TypeContainer m_toRemove;
 	StateFactory m_stateFactory;
 };
+
+#endif
