@@ -1,10 +1,11 @@
 #pragma once
 
 #include<SFML/Graphics.hpp>
-#include"window.h"
-#include"EventManager.h"
-#include"SharedContext.h"
-#include"Board.h"
+#include "window.h" 
+//#include"Board.h"
+#include "EventManager.h"
+#include "SharedContext.h"
+#include "StateManager.h"
 
 class Game
 {
@@ -14,9 +15,9 @@ public:
 	void run();
 
 private:
-
+	StateManager m_stateMgr;
 	SharedContext m_sharedContext;
-	Board m_Board;
+	//Board m_Board;
 	sf::Clock m_clock;
 	sf::Time m_time;
 	float m_elapsed;
